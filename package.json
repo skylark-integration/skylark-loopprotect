@@ -1,0 +1,28 @@
+{
+  "name": "skylark-loopprotect",
+  "description": "A version of jsbin-loopprotect playground) that ported to running on skylarkjs.",
+  "version": "0.9.0",
+  "keywords": [
+    "jsbin-loopprotect",
+    "playground"
+  ],
+  "homepage": "https://github.com/skylark-integration/skylarkn-loopprotect/",
+  "author": "Hudaokeji, Inc.",
+  "scripts": {
+    "build": "slib build ."
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/skylark-integration/skylark-loopprotect.git"
+  },
+  "bugs": {
+    "url": "https://github.com/skylark-integration/skylark-loopprotect/issues"
+  },
+  "license": "MIT",
+  "dependencies": {
+    "skylark-langx": "git+https://github.com/skylark-langx/skylark-langx.git#master"
+  },
+  "engines": {
+    "node": ">=0.10.1"
+  }
+}
