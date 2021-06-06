@@ -125,7 +125,7 @@ define('skylark-loopprotect/main',[],function(){
     var openPos = -1;
 
     do {
-      DEBUG && debug('looking backwards ' + lines[j]); // jshint ignore:line
+      debug('looking backwards ' + lines[j]); // jshint ignore:line
       closePos = lines[j].indexOf('*/');
       openPos = lines[j].indexOf('/*');
 
@@ -142,7 +142,7 @@ define('skylark-loopprotect/main',[],function(){
         closeCommentTags--;
 
         if (closeCommentTags === 0) {
-          DEBUG && debug('- exit: part of a multiline comment'); // jshint ignore:line
+          debug('- exit: part of a multiline comment'); // jshint ignore:line
           return true;
         }
       }
@@ -158,7 +158,7 @@ define('skylark-loopprotect/main',[],function(){
       character = line.substr(index, 1);
       if (character === '"' || character === '\'' || character === '.') {
         // our loop keyword was actually either in a string or a property, so let's exit and ignore this line
-        DEBUG && debug('- exit: matched inside a string or property key'); // jshint ignore:line
+        debug('- exit: matched inside a string or property key'); // jshint ignore:line
         return true;
       }
       if (character === '/' || character === '*') {
@@ -166,7 +166,7 @@ define('skylark-loopprotect/main',[],function(){
         --index;
         if (character === '/') {
           // we've found a comment, so let's exit and ignore this line
-          DEBUG && debug('- exit: part of a comment'); // jshint ignore:line
+          debug('- exit: part of a comment'); // jshint ignore:line
           return true;
         }
       }
@@ -182,7 +182,7 @@ define('skylark-loopprotect/main',[],function(){
     var theRest = lines.slice(lineNum).join('\n').substr(index).replace(labelRe, '');
     theRest.replace(reSingle, function commentStripper(match, capture, i) {
       var target = theRest.substr(0, i).replace(comments, '').trim();
-      DEBUG && debug('- directlyBeforeLoop: ' + target); // jshint ignore:line
+      debug('- directlyBeforeLoop: ' + target); // jshint ignore:line
       if (target.length === 0) {
         beforeLoop = true;
       }
@@ -251,31 +251,31 @@ define('skylark-loopprotect/main',[],function(){
       var foundLoopEnd = false;
 
       if (labelMatch.length) {
-        DEBUG && debug('- label match'); // jshint ignore:line
+        debug('- label match'); // jshint ignore:line
         index = line.indexOf(labelMatch[1]);
         if (!inCommentOrString(index, line)) {
           if (!inMultilineComment(lineNum, lines)) {
             if (directlyBeforeLoop(index, lineNum, lines)) {
-              DEBUG && debug('- found a label: "' + labelMatch[0] + '"'); // jshint ignore:line
+              debug('- found a label: "' + labelMatch[0] + '"'); // jshint ignore:line
               labelPostion = lineNum;
             } else {
-              DEBUG && debug('- ignored "label", false positive'); // jshint ignore:line
+              debug('- ignored "label", false positive'); // jshint ignore:line
             }
           } else {
-            DEBUG && debug('- ignored label in multline comment'); // jshint ignore:line
+            debug('- ignored label in multline comment'); // jshint ignore:line
           }
         } else {
-          DEBUG && debug('- ignored label in string or comment'); // jshint ignore:line
+          debug('- ignored label in string or comment'); // jshint ignore:line
         }
       }
 
       if (ignore[lineNum]) {
-        DEBUG && debug(' -exit: ignoring line ' + lineNum +': ' + line); // jshint ignore:line
+        debug(' -exit: ignoring line ' + lineNum +': ' + line); // jshint ignore:line
         return;
       }
 
       if (pushonly[lineNum]) {
-        DEBUG && debug('- exit: ignoring, but adding line ' + lineNum + ': ' + line); // jshint ignore:line
+        debug('- exit: ignoring, but adding line ' + lineNum + ': ' + line); // jshint ignore:line
         recompiled.push(line);
         return;
       }
@@ -284,7 +284,7 @@ define('skylark-loopprotect/main',[],function(){
       // otherwise I'm going to be writing a full JavaScript lexer...and god
       // knows I've got better things to be doing.
       if (match && matches.length === 1 && line.indexOf('jsbin') === -1) {
-        DEBUG && debug('match on ' + match + '\n'); // jshint ignore:line
+        debug('match on ' + match + '\n'); // jshint ignore:line
 
         // there's a special case for protecting `do` loops, we need to first
         // prtect the `do`, but then ignore the closing `while` statement, so
@@ -317,7 +317,7 @@ define('skylark-loopprotect/main',[],function(){
         if (index === line.length) {
           if (index === line.length && lineNum < (lines.length-1)) {
             // move to the next line
-            DEBUG && debug('- moving to next line'); // jshint ignore:line
+            debug('- moving to next line'); // jshint ignore:line
             recompiled.push(line);
             lineNum++;
             line = lines[lineNum];
@@ -329,7 +329,7 @@ define('skylark-loopprotect/main',[],function(){
 
         while (index < line.length) {
           character = line.substr(index, 1);
-          // DEBUG && debug(character, index); // jshint ignore:line
+          // debug(character, index); // jshint ignore:line
 
           if (character === '(') {
             openBrackets++;
@@ -356,18 +356,18 @@ define('skylark-loopprotect/main',[],function(){
             // add a close brace after loop to match the open brace before reset
             if (character === ';') {
               if (lineNum !== originalLineNum) {
-                DEBUG && debug('- multiline inline loop'); // jshint ignore:line
+                debug('- multiline inline loop'); // jshint ignore:line
                 // affect the compiled line
                 recompiled[originalLineNum] = recompiled[originalLineNum].substring(0, terminator + 1) + '{\nif (' + method + '({ line: ' + printLineNumber + ' })) break;\n' + recompiled[originalLineNum].substring(terminator + 1);
                 line += '\n}}\n';
               } else {
                 // simpler
-                DEBUG && debug('- single line inline loop'); // jshint ignore:line
+                debug('- single line inline loop'); // jshint ignore:line
                 line = line.substring(0, terminator + 1) + '{\nif (' + method + '({ line: ' + printLineNumber + ' })) break;\n' + line.substring(terminator + 1) + '\n}}\n';
               }
               foundLoopEnd = true;
             } else if (character === '{') {
-              DEBUG && debug('- multiline with braces'); // jshint ignore:line
+              debug('- multiline with braces'); // jshint ignore:line
               var insert = ';\nif (' + method + '({ line: ' + printLineNumber + ' })) break;\n';
               line = line.substring(0, index + 1) + insert + line.substring(index + 1);
 
@@ -376,17 +376,17 @@ define('skylark-loopprotect/main',[],function(){
 
             // work out where to put the reset
             if (lineNum === originalLineNum && labelPostion === null) {
-              DEBUG && debug('- simple reset insert'); // jshint ignore:line
+              debug('- simple reset insert'); // jshint ignore:line
               line = insertReset(printLineNumber, line, matchPosition);
               index += (';' + method + '({ line: ' + lineNum + ', reset: true }); ').length;
             } else {
               // insert the reset above the originalLineNum OR if this loop used
               // a label, we have to insert the reset *above* the label
               if (labelPostion === null) {
-                DEBUG && debug('- reset inserted above original line'); // jshint ignore:line
+                debug('- reset inserted above original line'); // jshint ignore:line
                 recompiled[originalLineNum] = insertReset(printLineNumber, recompiled[originalLineNum], matchPosition);
               } else {
-                DEBUG && debug('- reset inserted above matched label on line ' + labelPostion); // jshint ignore:line
+                debug('- reset inserted above matched label on line ' + labelPostion); // jshint ignore:line
                 if (recompiled[labelPostion] === undefined) {
                   labelPostion--;
                   matchPosition = 0;
@@ -402,11 +402,11 @@ define('skylark-loopprotect/main',[],function(){
                 return;
               }
 
-              DEBUG && debug('searching for closing brace of loop for: ' + line); // jshint ignore:line
+              debug('searching for closing brace of loop for: ' + line); // jshint ignore:line
               while (line !== null) {
                 character = line.substr(index, 1);
 
-                DEBUG && debug(index, character, openBraces); // jshint ignore:line
+                debug(index, character, openBraces); // jshint ignore:line
 
                 if (character === '{') {
                   openBraces++;
@@ -415,7 +415,7 @@ define('skylark-loopprotect/main',[],function(){
                 if (character === '}') {
                   openBraces--;
                   if (openBraces === 0) {
-                    DEBUG && debug('outside of loop, add a close brace to: ' + line); // jshint ignore:line
+                    debug('outside of loop, add a close brace to: ' + line); // jshint ignore:line
                     line = line.substring(0, index+1) + '}' + line.substring(index+1);
                     recompiled.push(line);
                     ignore[lineNum] = true;
@@ -430,13 +430,13 @@ define('skylark-loopprotect/main',[],function(){
                   ignore[lineNum] = true;
                   lineNum++;
                   line = lines[lineNum];
-                  DEBUG && debug(line); // jshint ignore:line
+                  debug(line); // jshint ignore:line
                   index = 0;
                 }
               }
               return;
             } else {
-              DEBUG && debug('searching for closing `while` statement for: ' + line); // jshint ignore:line
+              debug('searching for closing `while` statement for: ' + line); // jshint ignore:line
               // cycle forward until we find the close brace, after which should
               // be our while statement to ignore
               findwhile = false;
@@ -458,11 +458,11 @@ define('skylark-loopprotect/main',[],function(){
                 }
 
                 if (openBraces === 0) {
-                  DEBUG && debug('outside of closure, looking for `while` statement: ' + line); // jshint ignore:line
+                  debug('outside of closure, looking for `while` statement: ' + line); // jshint ignore:line
                 }
 
                 if (findwhile && line.indexOf('while') !== -1) {
-                  DEBUG && debug('- exit as we found `while`: ' + line); // jshint ignore:line
+                  debug('- exit as we found `while`: ' + line); // jshint ignore:line
                   // TODO: handle while statement in multiple lines
                   line += '}';
                   recompiled.push(line);
@@ -477,7 +477,7 @@ define('skylark-loopprotect/main',[],function(){
                   ignore[lineNum] = true;
                   lineNum++;
                   line = lines[lineNum];
-                  DEBUG && debug(line); // jshint ignore:line
+                  debug(line); // jshint ignore:line
                   index = 0;
                 }
               }
@@ -489,7 +489,7 @@ define('skylark-loopprotect/main',[],function(){
 
           if (index === line.length && lineNum < (lines.length-1)) {
             // move to the next line
-            DEBUG && debug('- moving to next line'); // jshint ignore:line
+            debug('- moving to next line'); // jshint ignore:line
             recompiled.push(line);
             lineNum++;
             line = lines[lineNum];
@@ -499,16 +499,16 @@ define('skylark-loopprotect/main',[],function(){
         }
       } else {
         // else we're a regular line, and we shouldn't be touched
-        DEBUG && debug('regular line ' + line); // jshint ignore:line
+        debug('regular line ' + line); // jshint ignore:line
         recompiled.push(line);
       }
     });
 
-    DEBUG && debug('---- source ----'); // jshint ignore:line
-    DEBUG && debug(code); // jshint ignore:line
-    DEBUG && debug('---- rewrite ---'); // jshint ignore:line
-    DEBUG && debug(recompiled.join('\n')); // jshint ignore:line
-    DEBUG && debug(''); // jshint ignore:line
+    debug('---- source ----'); // jshint ignore:line
+    debug(code); // jshint ignore:line
+    debug('---- rewrite ---'); // jshint ignore:line
+    debug(recompiled.join('\n')); // jshint ignore:line
+    debug(''); // jshint ignore:line
 
     return disableLoopProtection ? code : recompiled.join('\n');
   }
