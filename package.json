@@ -22,6 +22,12 @@
   "dependencies": {
     "skylark-langx": "git+https://github.com/skylark-langx/skylark-langx.git#master"
   },
+  "files": [
+    "demo/",
+    "dist/",
+    "src/",
+    "skins/"
+  ],
   "engines": {
     "node": ">=0.10.1"
   }
